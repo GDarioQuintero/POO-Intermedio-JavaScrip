@@ -5,4 +5,17 @@ acceder a los metodos o atributos de los diferentes prototipos.
 - Es de gran importancia para acceder a los metodos y atributos del prototipo Object.
 
 
+--------------- COMO FUNCIONA LA MEMORIA EN JAVASCRIPT---------------------------------
 
+- los objetos en JavaScript hacen referencia a un espacio en memoria, si copiamos un objeto en otro,
+y luego cambiamos las propiedades de la copia del objeto, tambien cambiaran las propiedades 
+del objeto original.
+
+-los nombres y valores de una variable se guardan en espacios diferentes de la memoria stack
+pero tienen un vinculo o una referencia que los relaciona
+
+- hay dos tipos de memorias:
+  * Memoria stack: es muy rapida pero de poco espacio, guardamos variables
+  * memoria Head: mas lenta con mas capacidad, aqui guardamos los objetos. cuando se guarda un objeto 
+    su valor lo que es realmente es un apuntador al lugar de la memoria head en donde se encuentra realmente
+    el valor del objeto
