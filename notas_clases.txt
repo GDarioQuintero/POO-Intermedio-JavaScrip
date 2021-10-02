@@ -1,0 +1,8 @@
+----------Static: atributos y metodos estaticos en JavaScript.--------------------------
+
+- Es una forma de saltarnos la nececidad de crear instancias a de los prototipos para poder
+acceder a los metodos o atributos de los diferentes prototipos.
+- Es de gran importancia para acceder a los metodos y atributos del prototipo Object.
+
+
+
