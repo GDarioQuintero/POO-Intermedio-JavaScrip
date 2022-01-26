@@ -63,83 +63,123 @@
 
 //----------------------------Deep copy con recursividad-----------------------------------------------
 
-const obj1 = {
-    a: "a",
-    b: "b",
-    c: {
-        d: "d",
-        e: "e",
-    },
-    editar() {
-        this.a = "AAAAAAAAAAAAA";
-    }
-};
+// const obj1 = {
+//     a: "a",
+//     b: "b",
+//     c: {
+//         d: "d",
+//         e: "e",
+//     },
+//     editar() {
+//         this.a = "AAAAAAAAAAAAA";
+//     }
+// };
 
-//esta funcion determina si el parametro resivido es un objeto
-function isObject(subject) {
-    return typeof subject == "object";
-}
+// //esta funcion determina si el parametro resivido es un objeto
+// function isObject(subject) {
+//     return typeof subject == "object";
+// }
 
-//esta funcion determina si el parametro resivido es un Array
-function isArray(subject){
-    return Array.isArray(subject);
-}
+// //esta funcion determina si el parametro resivido es un Array
+// function isArray(subject){
+//     return Array.isArray(subject);
+// }
 
-//Funcion recursiva para copiar objetos sin que halla ningun inconveniente a la hora de copiar objetos con objetos como atributos.
-function deepCopy(subject){
-    let copySubject;
+// //Funcion recursiva para copiar objetos sin que halla ningun inconveniente a la hora de copiar objetos con objetos como atributos.
+// function deepCopy(subject){
+//     let copySubject;
 
-    const subjectIsObject = isObject(subject);
-    const subjectIsArray = isArray(subject);
+//     const subjectIsObject = isObject(subject);
+//     const subjectIsArray = isArray(subject);
 
-    if (subjectIsArray) {
-        copySubject = [];
-    } else if (subjectIsObject) {
-        copySubject = {};
-    } else {
-        return subject;
-    }
+//     if (subjectIsArray) {
+//         copySubject = [];
+//     } else if (subjectIsObject) {
+//         copySubject = {};
+//     } else {
+//         return subject;
+//     }
 
-    for (key in subject) {
-        //en esta linea estamos validando si cada pripiedad del objeto es un array o un objeto o un atributo normal
-        const keyIsObject = isObject(subject[key]);
-        if (keyIsObject) {
-            //este es el llamado recursivo
-            copySubject[key] = deepCopy(subject[key]);
-        } else {
-            if (subjectIsArray) {
-                copySubject.push(subject[key]);
-            } else {
-                copySubject[key] = subject[key];
-            }
-        }
-    }
-    return copySubject;
-}
+//     for (key in subject) {
+//         //en esta linea estamos validando si cada propiedad del objeto es un array o un objeto o un atributo normal
+//         const keyIsObject = isObject(subject[key]);
+//         if (keyIsObject) {
+//             //este es el llamado recursivo
+//             copySubject[key] = deepCopy(subject[key]);
+//         } else {
+//             if (subjectIsArray) {
+//                 copySubject.push(subject[key]);
+//             } else {
+//                 copySubject[key] = subject[key];
+//             }
+//         }
+//     }
+//     return copySubject;
+// }
 
 //-----------------Abstracion con objetos literales y dep copy--------------------
 
-const studentBase = {
-    name: undefined,
-    amail: undefined,
-    age: undefined,
-    approvedCourse: undefined,
-    learningPaths: undefined,
-    socialMedia: {
-        twitter: undefined,
-        instagram: undefined,
-        facebook: undefined,
-    },
-};
+// const studentBase = {
+//     name: undefined,
+//     amail: undefined,
+//     age: undefined,
+//     approvedCourse: undefined,
+//     learningPaths: undefined,
+//     socialMedia: {
+//         twitter: undefined,
+//         instagram: undefined,
+//         facebook: undefined,
+//     },
+// };
 
-//copio todas las propiedades de studentBase a el objeto juan con deepCopy 
-const juan = deepCopy(studentBase);
-//proteje todas las propiedades del objeto de ser borradas
-Object.seal(juan);
+// //copio todas las propiedades de studentBase a el objeto juan con deepCopy 
+// const juan = deepCopy(studentBase);
+// //proteje todas las propiedades del objeto de ser borradas
+// Object.seal(juan);
 
-//Comprueba si el objeto a pasado por el metodo seal()
-Object.isSealed(juan);
+// //Comprueba si el objeto a pasado por el metodo seal(). retorna un valor true o false
+// Object.isSealed(juan);
 
-//Comprueba si el objeto esta protegido el writable como false
-Object.isFrozen(juan);
-juan.name = "German Quintero";
+// //Comprueba si el objeto esta protegido el writable como false. retorna un valor true o false
+// Object.isFrozen(juan);
+// juan.name = "German Quintero";
+
+
+//-------------------Factory pattern y RORO-- Fabricas de objetos---------------------------
+
+//Esta funcion nos tira un error nuevo cuando no enviamos ningun valor en un parametro obligatorio
+function requiredParam(param){
+    throw new Error(param + " Es obligatorio");
+}
+
+
+//Son patrones que nos permiten crear moldes de objetos pero no a partir de objetos literales si no a partir de funciones, esto nor permite craer objetos sin necesisdad de memorizar el orden de los parametros
+
+function createStudent ({
+    name = requiredParam("name"),//forma de hacer un parametro obligatorio
+    email  = requiredParam("email"), 
+    age,
+    twitter,
+    facebook,
+    instagram,
+    approvedCourses = [],
+    learningPaths = [],
+} = {}) {
+    return {
+        name,
+        email,
+        age,
+        approvedCourses,
+        learningPaths,
+        socialMedia: {
+            twitter,
+            facebook,
+            instagram,
+        },
+    }
+}
+
+const juan = createStudent({
+    name: "Dayanna",
+    email: "lealdayann1994@gmail.com",
+});
