@@ -76,14 +76,14 @@
 // };
 
 // //esta funcion determina si el parametro resivido es un objeto
-// function isObject(subject) {
-//     return typeof subject == "object";
-// }
+function isObject(subject) {
+    return typeof subject == "object";
+}
 
-// //esta funcion determina si el parametro resivido es un Array
-// function isArray(subject){
-//     return Array.isArray(subject);
-// }
+//esta funcion determina si el parametro resivido es un Array
+function isArray(subject){
+    return Array.isArray(subject);
+}
 
 // //Funcion recursiva para copiar objetos sin que halla ningun inconveniente a la hora de copiar objetos con objetos como atributos.
 // function deepCopy(subject){
@@ -165,21 +165,141 @@ function createStudent ({
     approvedCourses = [],
     learningPaths = [],
 } = {}) {
-    return {
-        name,
+
+    //Declaramos las variables que queramos que sean privadas
+    const private = {
+        "_name": name,
+        "_learningPaths": learningPaths,
+    };
+
+    //Declaramos las variables y metodos que queremos que sean publicos
+    const public = {
         email,
         age,
         approvedCourses,
-        learningPaths,
         socialMedia: {
             twitter,
             facebook,
             instagram,
         },
-    }
+        get name(){
+            return private["_name"];
+        },
+        //metodo set para modificar nuestro atributo, este metodo crea una propiedad falsa para poder entrer el atributo privado
+        //y poder ser editado con las restricciones que queramos, luego de haberlo modificado la primera ves nos deja automaticamente en false
+        //la propiedad writable para asi no poder volver a modificarlo.
+        set name(newName){
+            //Impedimos que el name sea un string vacio
+            if(newName.length != 0) {
+                private["_name"] = newName; 
+            } else {
+                console.warn("Tu nombre debe tener al menos 1 caracter");
+            }            
+        },
+
+        get learningPaths(){
+            return private["_learningPaths"];
+        },
+
+        set learningPaths(newLP) {
+
+            //en los if estamos validando que lo que estemos recibiendo realmente sea un leaningPaths 
+            //En si validamos que cumpla con las cualidades de un learningPaths pero no de como lo crean
+            
+            if(!newLP.name) {
+                console.warn("Tu LP no tiene la propiedad name");
+                return;//si la validacion es falsa el return impide la ejecucion del resto del codigo
+            } 
+
+            if(!newLP.courses) {
+                console.warn("Tu LP no tiene courses");
+                return;
+            }
+
+            if(!isArray(newLP.courses)) {
+                console.warn("Tu LP no es una lista (*de cursos)");
+                return;
+            }
+            //Si cumple con la validacion entoces agregamos nuesta ruta de aprendizaje
+            private["_learningPaths"].push(newLP);
+        },
+
+        //Metodo que me permite modificar el name
+        // changeName(newName){
+        //     private["_name"] = newName;
+        // },
+
+        // //,etodo que me retorna el name 
+        // readName(){
+        //     return private["_name"];
+        // },
+    };
+    //Con este codigo impedimos que nos puedan modificar los metodos pero tambien impideria que podamos trabajar el polimorfismo
+    // Object.defineProperty(public, "readName", {
+    //     configurable: false,
+    //     writable: false,
+    // });
+
+    // Object.defineProperty(public, "changeName", {
+    //     configurable: false,
+    //     writable: false,
+    // });
+    //retornamos el objeto public
+    return public;       
+}
+
+function createLearningPaths ({
+    name = requiredParam("name"),
+    courses = [],
+}) {
+    const private = {
+        "_name": name,
+        "_couses": courses,
+    };
+
+    const public = {
+        
+        get name(){
+            return private["_name"];
+        },
+
+        set name(newName){
+            //Impedimos que el name sea un string vacio
+            if(newName.length != 0) {
+                private["_name"] = newName; 
+            } else {
+                console.warn("Tu nombre debe tener al menos 1 caracter");
+            } 
+        },
+
+        get courses(){
+            return private["_courses"];
+        },
+    };
+    return public;
 }
 
 const juan = createStudent({
     name: "Dayanna",
     email: "lealdayann1994@gmail.com",
 });
+
+
+
+
+//----------------------Module pattern y namespaces-----------------------------------
+
+// Todo lo de esta clase esta en el codigo anterior 
+//JavaScript no es un lenguaje fuertemente tipado, osea que no hay que definir el tipo de variables 
+// lo que hace los namespace es definir el alcance de las variable y metodos y asi poder definir cuando se puedan modificar o no.
+
+
+//---------------------------duck typing en javaScript--------------------------------------------------------
+
+//es la forma en como identificamos a nuestros elementos dependiendo de los atributos y metodos que tengan por dentro
+//Es de gran importancia que tambien cumpla con la validacion de que se cree con las funciones que nosotros desarrollemos. 
+
+
+//---------------------------Instances of en javaScript--------------------------------------------------------
+
+//Nos ayudan a saber si realmente los objetos  son creados con prototipos que hemos creadoo y no sean impostores.
