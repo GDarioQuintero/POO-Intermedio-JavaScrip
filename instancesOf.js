@@ -37,15 +37,31 @@ function Student ({
         facebook,
     };
 
-    if(isArray(learningPaths)){
-        this.learningPaths = [];
-        for(learningPathIndex in learningPaths) {
-            if(learningPaths[learningPathIndex] instanceof LearningPaths){
-                this.learningPaths.push(learningPaths[learningPathIndex]);               
+    const private = {
+        "_learningPaths": [],//Protegemos nuestro atributo como privado para que no puedan acceder directamente a el
+    }
+         
+    //Utilizamos el metodo estatico para modificar la estructura del atibuto learningPaths y darle una estructura de objeto y a
+    // y agregarle el get y el set
+    Object.defineProperty(this, "learningPaths", {
+        get() {
+            return private["_learningPaths"];//El set me retorna la variable privada
+        },
+        set(newLP) {
+            if( newLP instanceof LearningPaths) { //valida que el nuevo learningPaths sea una instancia de nuestro prototipo
+                private["_learningPaths"].push(newLP);  //Agrega el nuevo learningPaths al array con los demas learningPats 
+            } else {
+                //Si el newLP no es una instancia del prototipo da un menzaje de error
+                console.warn("Alguno de los learningPath no es una instancia del prototipo LearningPath ")
             }
-        }
-    }  
+        },
+    });
+    
+    for(learningPathIndex in learningPaths) {
+        this.learningPaths = learningPaths[learningPathIndex];
+    }
 };
+
 
 //Convertimos nuestra fabrica de objetos en un prototipo LearningPaths
 function LearningPaths ({
@@ -68,10 +84,10 @@ const juan = new Student({
         escuelaWeb,
         //Prueba de una escuela impostora que gracias  ala validacion ya no permite que se agrege sin que 
         //sea creada mediente el prototipo
-        {
-            name: "Impostor",
-            courses: [],
-        }
+        // {
+        //     name: "Impostor",
+        //     courses: [],
+        // }
     ],
 });
 
